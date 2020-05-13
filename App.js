@@ -1,9 +1,18 @@
 import React, {useState} from 'react';
-import {Text, StyleSheet, View, FlatList} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  FlatList,
+  ScrollView,
+  TouchableHighlight,
+  Platform,
+} from 'react-native';
 import Cita from './components/Cita';
 import Formulario from './components/Formulario';
 
 const App = () => {
+  const [mostrarForm, guardarMostrarForm] = useState(false);
   //definir el state de citas
   const [citas, setCitas] = useState([
     {
@@ -33,23 +42,42 @@ const App = () => {
     });
   };
 
+  const mostrarFormulario = () => {
+    guardarMostrarForm(!mostrarForm);
+  };
+
   return (
     <>
-      <View style={styles.contenedor}>
+      <ScrollView style={styles.contenedor}>
         <Text style={styles.titulo}>Administrador de Citas</Text>
-        <Formulario />
-        <Text style={styles.titulo}>
-          {citas.length > 0 ? 'Administra tus citas' : 'No hay citas'}
-        </Text>
-
-        <FlatList
-          data={citas}
-          renderItem={({item}) => (
-            <Cita item={item} eliminarPaciente={eliminarPaciente} />
+        <TouchableHighlight
+          onPress={() => mostrarFormulario()}
+          style={styles.botonEnviar}>
+          <Text style={styles.textoEnviar}>Mostrar Formulario</Text>
+        </TouchableHighlight>
+        <View style={styles.contenido}>
+          {mostrarForm ? (
+            <>
+              <Text style={styles.titulo}>Crear nueva cita</Text>
+              <Formulario />
+            </>
+          ) : (
+            <>
+              <Text style={styles.titulo}>
+                {citas.length > 0 ? 'Administra tus citas' : 'No hay citas'}
+              </Text>
+              <FlatList
+                style={styles.listado}
+                data={citas}
+                renderItem={({item}) => (
+                  <Cita item={item} eliminarPaciente={eliminarPaciente} />
+                )}
+                keyExtractor={cita => cita.id}
+              />
+            </>
           )}
-          keyExtractor={cita => cita.id}
-        />
-      </View>
+        </View>
+      </ScrollView>
     </>
   );
 };
@@ -63,8 +91,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 24,
     fontWeight: 'bold',
-    marginTop: 50,
+    marginTop: Platform.OS === 'ios' ? 40 : 20,
     marginBottom: 20,
+  },
+  contenido: {
+    flex: 1,
+    marginHorizontal: '2.5%',
+  },
+  listado: {
+    flex: 1,
+  },
+  botonEnviar: {
+    padding: 10,
+    backgroundColor: 'green',
+    marginVertical: 10,
+  },
+  textoEnviar: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 export default App;

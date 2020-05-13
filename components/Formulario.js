@@ -1,9 +1,17 @@
 import React, {useState} from 'react';
-import {Text, StyleSheet, View, TextInput, Button} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  TextInput,
+  Button,
+  TouchableHighlight,
+  Alert,
+  ScrollView,
+} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const Formulario = () => {
-
   const [paciente, guardaPaciente] = useState('');
   const [dueño, guardaDueño] = useState('');
   const [telefono, guardaTelefono] = useState('');
@@ -41,28 +49,50 @@ const Formulario = () => {
     hideTimePicker();
   };
 
+  const crearNuevaCita = () => {
+    if (
+      paciente.trim() === '' ||
+      dueño.trim() === '' ||
+      telefono.trim() === '' ||
+      sintoma.trim() === '' ||
+      fecha.trim() === '' ||
+      hora.trim() === ''
+    ) {
+      MostrarAlerta();
+      return;
+    }
+  };
+  const MostrarAlerta = () => {
+    Alert.alert('Error', 'Todos los campos son obligatorios'),
+      [
+        {
+          text: 'Ok',
+        },
+      ];
+  };
+
   return (
     <>
-      <View style={styles.formulario}>
+      <ScrollView style={styles.formulario}>
         <View>
           <Text style={styles.label}>Paciente:</Text>
           <TextInput
             style={styles.input}
-            onChangeText={texto => console.log(texto)}
+            onChangeText={texto => guardaPaciente(texto)}
           />
         </View>
         <View>
           <Text style={styles.label}>Dueño:</Text>
           <TextInput
             style={styles.input}
-            onChangeText={texto => console.log(texto)}
+            onChangeText={texto => guardaDueño(texto)}
           />
         </View>
         <View>
           <Text style={styles.label}>Telefono:</Text>
           <TextInput
             style={styles.input}
-            onChangeText={texto => console.log(texto)}
+            onChangeText={texto => guardaTelefono(texto)}
             keyboardType={'numeric'}
           />
         </View>
@@ -71,7 +101,7 @@ const Formulario = () => {
           <TextInput
             multiline={true}
             style={styles.input}
-            onChangeText={texto => console.log(texto)}
+            onChangeText={texto => guardaSintoma(texto)}
           />
         </View>
         <View>
@@ -104,7 +134,12 @@ const Formulario = () => {
           />
           <Text>{hora}</Text>
         </View>
-      </View>
+        <TouchableHighlight
+          onPress={() => crearNuevaCita()}
+          style={styles.botonEnviar}>
+          <Text style={styles.textoEnviar}>Enviar</Text>
+        </TouchableHighlight>
+      </ScrollView>
     </>
   );
 };
@@ -127,6 +162,16 @@ const styles = StyleSheet.create({
     borderColor: '#e1e1e1',
     borderWidth: 1,
     borderStyle: 'solid',
+  },
+  botonEnviar: {
+    padding: 10,
+    backgroundColor: 'green',
+    marginVertical: 10,
+  },
+  textoEnviar: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
